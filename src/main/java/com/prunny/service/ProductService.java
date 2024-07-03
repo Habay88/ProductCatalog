@@ -1,6 +1,10 @@
 package com.prunny.service;
 
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.prunny.entity.Product;
 import com.prunny.request.ProductRequest;
@@ -14,15 +18,25 @@ public interface ProductService {
 
 	    void reduceQuantity(long productId, long quantity);
 
-		List<ProductResponse> getAllProducts();
+		Page<Product> getAllProducts(Pageable pageable);
 
 		Product updateProduct(long productId, Product product);
 
 		Product deleteproduct(long productId);
 
-		List<Product> getProductsByName(String productName);
+		//List<Product> getProductsByName(String productName);
 
-		List<Product> findByCategoryId(long id);
+		Page<Product> findByproductId(long productId,Pageable pageable);
 
-		List<Product> findByPriceRange(long minimumPrice, long maximumPrice);
+		
+
+		Page<Product> getProductsByName(String productName, Pageable pageable);
+
+		Page<Product> findByPriceRange(long minimumPrice, long maximumPrice, Pageable pageable);
+
+		
+
+		
+
+		
 }

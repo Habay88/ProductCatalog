@@ -1,9 +1,12 @@
 package com.prunny.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.prunny.entity.Product;
@@ -124,19 +127,31 @@ private ProductResponse mapToDtoResponse(Product product) {
 	}
 
 	@Override
-	public List<Product> getProductsByName(String productName) {
-		 return productRepository.getProductsByName(productName);
+	public Page<Product> getProductsByName(String productName,Pageable pageable) {
+		 return productRepository.findByproductNameContaining(productName,pageable);
 	}
 
 	@Override
-	public List<Product> findByCategoryId(long id) {
+	public Page<Product> findByproductId(long productId,Pageable pageable) {
 		// TODO Auto-generated method stub
-		return productRepository.findByCategoryId(id);
+		return productRepository.findByproductId(productId,pageable);
 	}
 
 	@Override
-	public List<Product> findByPriceRange(long minimumPrice, long maximumPrice) {
+	public Page<Product> findByPriceRange(long minimumPrice, long maximumPrice,Pageable pageable) {
 		// TODO Auto-generated method stub
-		return productRepository.findByPriceBetween(minimumPrice, maximumPrice);
+		return productRepository.findByPriceBetween(minimumPrice, maximumPrice,pageable);
 	}
+
+	@Override
+	public Page<Product> getAllProducts(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return productRepository.findAll(pageable);
+	}
+
+	/*
+	 * @Override public List<Product> getProductsByName(String productName) { //
+	 * TODO Auto-generated method stub return null; }
+	 */             
+                
 }

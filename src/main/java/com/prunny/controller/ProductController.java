@@ -1,8 +1,11 @@
 package com.prunny.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -43,15 +46,14 @@ public class ProductController {
 	                = productService.getProductById(productId);
 	        return new ResponseEntity<>(productResponse, HttpStatus.OK);
 	    }
-	 @GetMapping
-	 @ResponseStatus(HttpStatus.OK)
-	 public List<ProductResponse >getAllProducts(){
-		 return productService.getAllProducts();
-	 }
+	  @GetMapping
+	    public ResponseEntity<Page<Product>> getAllProducts(Pageable pageable) {
+	        return ResponseEntity.ok(productService.getAllProducts(pageable));
+	    }
 
 	 @GetMapping ("/all")
-	 public List<ProductResponse> getAvailableProducts(){
-		 return productService.getAllProducts();
+	 public Page<Product> getAvailableProducts(Pageable pageable){
+		 return productService.getAllProducts(pageable);
 	 }
 	 
 	 // update existing 
@@ -71,8 +73,8 @@ public class ProductController {
 	   
 	   // get product by name using a raw SQL statement
 	   @GetMapping("/products-by-name")
-	   public List<Product> getProductsByName(@RequestParam(name ="productName") String productName) {
-	       return productService.getProductsByName(productName);
+	   public Page<Product> getProductsByName(@RequestParam(name ="productName") String productName,Pageable pageable) {
+	       return productService.getProductsByName(productName,pageable);
 	   }
 	 
 	    @PutMapping("/reduceQuantity/{id}")
@@ -83,13 +85,13 @@ public class ProductController {
 	    }
 	    
 	    @GetMapping("/category/{id}")
-	    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable long id) {
-	        return ResponseEntity.ok(productService.findByCategoryId(id));
+	    public ResponseEntity<Page<Product>> getProductsByCategory(@PathVariable long productId, Pageable pageable) {
+	        return ResponseEntity.ok(productService.findByproductId(productId,pageable));
 	    }
 
 	    @GetMapping("/price-range")
-	    public ResponseEntity<List<Product>> getProductsByPriceRange(@RequestParam long minimumPrice, @RequestParam long maximumPrice) {
-	        return ResponseEntity.ok(productService.findByPriceRange(minimumPrice, maximumPrice));
+	    public ResponseEntity<Page<Product>> getProductsByPriceRange(@RequestParam long minimumPrice, @RequestParam long maximumPrice,Pageable pageable) {
+	        return ResponseEntity.ok(productService.findByPriceRange(minimumPrice, maximumPrice, pageable));
 	    }
 	
 }
