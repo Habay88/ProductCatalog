@@ -81,5 +81,15 @@ public class ProductController {
 	            productService.reduceQuantity(productId,quantity);
 	            return new ResponseEntity<>(HttpStatus.OK);
 	    }
+	    
+	    @GetMapping("/category/{id}")
+	    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable long id) {
+	        return ResponseEntity.ok(productService.findByCategoryId(id));
+	    }
+
+	    @GetMapping("/price-range")
+	    public ResponseEntity<List<Product>> getProductsByPriceRange(@RequestParam long minimumPrice, @RequestParam long maximumPrice) {
+	        return ResponseEntity.ok(productService.findByPriceRange(minimumPrice, maximumPrice));
+	    }
 	
 }

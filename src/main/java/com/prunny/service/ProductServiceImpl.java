@@ -127,4 +127,16 @@ private ProductResponse mapToDtoResponse(Product product) {
 	public List<Product> getProductsByName(String productName) {
 		 return productRepository.getProductsByName(productName);
 	}
+
+	@Override
+	public List<Product> findByCategoryId(long id) {
+		// TODO Auto-generated method stub
+		return productRepository.findByCategoryId(id);
+	}
+
+	@Override
+	public List<Product> findByPriceRange(long minimumPrice, long maximumPrice) {
+		// TODO Auto-generated method stub
+		return productRepository.findByPriceBetween(minimumPrice, maximumPrice);
+	}
 }

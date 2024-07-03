@@ -21,4 +21,8 @@ public interface ProductService {
 		Product deleteproduct(long productId);
 
 		List<Product> getProductsByName(String productName);
+
+		List<Product> findByCategoryId(long id);
+
+		List<Product> findByPriceRange(long minimumPrice, long maximumPrice);
 }
