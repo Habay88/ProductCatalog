@@ -23,9 +23,9 @@ public class Category {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private long categoryId;
     private String name;
     private String description;
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 }

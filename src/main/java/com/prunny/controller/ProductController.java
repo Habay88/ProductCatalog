@@ -24,19 +24,19 @@ import com.prunny.service.ProductService;
 
 //http://localhost:8083/swagger-ui/index.html
 @RestController
-@RequestMapping("/product")
+@RequestMapping("api/product")
 public class ProductController {
 
 	 @Autowired
 	    private ProductService productService;
 	 
 	 @ManagedOperation(description = "Creates new product")
-	 @PostMapping
+	 @PostMapping("/save")
 	 public ResponseEntity<Long> addProduct(@RequestBody ProductRequest productRequest) {
 	        long productId = productService.addProduct(productRequest);
 	        return new ResponseEntity<>(productId, HttpStatus.CREATED);
 	    }
-	// @PreAuthorize("hasAuthority('Admin') || hasAuthority('Customer')|| hasAuthority('SCOPE_internal')")
+	
 	 @GetMapping("/{id}")
 	    public ResponseEntity<ProductResponse> getProductById(@PathVariable("id") long productId) {
 	        ProductResponse productResponse
