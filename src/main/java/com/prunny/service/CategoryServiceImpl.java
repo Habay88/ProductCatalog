@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService{
 		  log.info("Adding category..");
 		  Category  category = Category.builder()
 				  .name(categoryRequest.getName())
-				  .description(categoryRequest.getDescription())
+				  
 				  .build();
 		 categoryRepository.save(category);
 		log.info("Category created");
@@ -61,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService{
 		return CategoryResponse.builder()
 				.id(category.getCategoryId())
 				.name(category.getName())
-			    .description(category.getDescription())
+			
 				
 				.build();
 	}
@@ -71,7 +71,7 @@ public class CategoryServiceImpl implements CategoryService{
      Category existingCategory = categoryRepository.findById(categoryId).orElseThrow(
      ()-> new CategoryServiceCustomException("Category with given id not found","CATEGORY_NOT_FOUND"));
      existingCategory.setName(category.getName());
-     existingCategory.setDescription(category.getDescription());
+   
      categoryRepository.save(existingCategory);
      return existingCategory;
 	}

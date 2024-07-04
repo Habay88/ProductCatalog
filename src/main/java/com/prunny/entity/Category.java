@@ -5,8 +5,10 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +24,17 @@ import lombok.Setter;
 public class Category {
 
     @Id
-    @GeneratedValue
-    private long categoryId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long categoryId;
+    
+  
     private String name;
-    private String description;
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
+
+	public void setid(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
 }

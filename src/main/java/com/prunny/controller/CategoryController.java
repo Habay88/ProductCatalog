@@ -52,12 +52,19 @@ public class CategoryController {
     	return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
  
-
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@RequestParam(name="id") long id, @Validated @RequestBody Category category) {
-        Category updatedCategory = categoryService.updateCategory(id, category);
-        		 return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @Validated @RequestBody Category category) {
+        category.setid(id);
+        return ResponseEntity.ok(categoryService.updateCategory(id,category));
     }
+
+	/*
+	 * @PutMapping("/{id}") public ResponseEntity<Category>
+	 * updateCategory(@RequestParam(name="id") long id, @Validated @RequestBody
+	 * Category category) { Category updatedCategory =
+	 * categoryService.updateCategory(id, category); return new
+	 * ResponseEntity<>(updatedCategory, HttpStatus.OK); }
+	 */
     
 
     

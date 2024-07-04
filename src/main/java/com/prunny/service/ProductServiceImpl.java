@@ -9,8 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.prunny.entity.Category;
 import com.prunny.entity.Product;
 import com.prunny.exception.ProductServiceCustomException;
+import com.prunny.repository.CategoryRepository;
 import com.prunny.repository.ProductRepository;
 import com.prunny.request.ProductRequest;
 import com.prunny.response.ProductResponse;
@@ -19,84 +21,82 @@ import lombok.extern.log4j.Log4j2;
 
 @Service
 @Log4j2
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+	@Autowired
+	private ProductRepository productRepository;
+	@Autowired
+	CategoryRepository categoryRepository;
 
-    @Override
-    public long addProduct(ProductRequest productRequest) {
-       log.info("Adding Product..");
-
-        Product product
-                = Product.builder()
-                .productName(productRequest.getName())
-                .quantity(productRequest.getQuantity())
-                .price(productRequest.getPrice())
-                .build();
-
-        productRepository.save(product);
-
-        log.info("Product Created");
-        return product.getProductId();
-
+	/*
+	 * @Override public long addProduct(ProductRequest productRequest) {
+	 * 
+	 * 
+	 * log.info("Adding Product..");
+	 * 
+	 * Product product = Product.builder() .productName(productRequest.getName())
+	 * .quantity(productRequest.getQuantity()) .price(productRequest.getPrice())
+	 * .categoryId(productRequest.getCategory()) .build();
+	 * 
+	 * productRepository.save(product);
+	 * 
+	 * log.info("Product Created"); return product.getProductId();
+	 * 
+	 * 
+	 * }
+	 */
+	@Override
+	public Product addProduct(Product product) {
+        if (product.getCategory() != null && product.getCategory().getCategoryId() == null) {
+            Category savedCategory = categoryRepository.save(product.getCategory());
+            product.setCategory(savedCategory);
+        }
+        return productRepository.save(product);
     }
-
-    @Override
-    public ProductResponse getProductById(long productId) {
-        log.info("Get the product for productId: {}", productId);
-
-        Product product = productRepository.findById(productId)
-                .orElseThrow(
-                        () -> new ProductServiceCustomException("Product with given id not found","PRODUCT_NOT_FOUND"));
-
-        ProductResponse productResponse  = new ProductResponse();
-
-        BeanUtils.copyProperties(product, productResponse);
-
-        return productResponse;
-    }
-public List<ProductResponse> getAllProducts(){
-	
-	List<Product> products = productRepository.findAll();
-	return products.stream().map(this::mapToDtoResponse).toList();		
-}
-private ProductResponse mapToDtoResponse(Product product) {
-	return ProductResponse.builder()
-			.productId(product.getProductId())
-			.productName(product.getProductName())
-		    .quantity(product.getQuantity())
-		    .price(product.getPrice())
-			
-			.build();
-}
-//    private void copyProperties(Product product, ProductResponse productResponse) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 
 	@Override
-    public void reduceQuantity(long productId, long quantity) {
-        log.info("Reduce Quantity {} for Id: {}", quantity,productId);
+	public ProductResponse getProductById(long productId) {
+		log.info("Get the product for productId: {}", productId);
 
-        Product product
-                = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductServiceCustomException(
-                        "Product with given Id not found",
-                        "PRODUCT_NOT_FOUND"
-                ));
+		Product product = productRepository.findById(productId).orElseThrow(
+				() -> new ProductServiceCustomException("Product with given id not found", "PRODUCT_NOT_FOUND"));
 
-        if(product.getQuantity() < quantity) {
-            throw new ProductServiceCustomException(
-                    "Product does not have sufficient Quantity",
-                    "INSUFFICIENT_QUANTITY"
-            );
-        }
+		ProductResponse productResponse = new ProductResponse();
 
-        product.setQuantity(product.getQuantity() - quantity);
-        productRepository.save(product);
-        log.info("Product Quantity updated Successfully");
-    }
+		BeanUtils.copyProperties(product, productResponse);
+
+		return productResponse;
+	}
+
+	public List<ProductResponse> getAllProducts() {
+
+		List<Product> products = productRepository.findAll();
+		return products.stream().map(this::mapToDtoResponse).toList();
+	}
+
+	private ProductResponse mapToDtoResponse(Product product) {
+		return ProductResponse.builder().id(product.getId()).productName(product.getProductName())
+				.quantity(product.getQuantity()).price(product.getPrice())
+
+				.build();
+	}
+
+	@Override
+	public void reduceQuantity(long productId, long quantity) {
+		log.info("Reduce Quantity {} for Id: {}", quantity, productId);
+
+		Product product = productRepository.findById(productId).orElseThrow(
+				() -> new ProductServiceCustomException("Product with given Id not found", "PRODUCT_NOT_FOUND"));
+
+		if (product.getQuantity() < quantity) {
+			throw new ProductServiceCustomException("Product does not have sufficient Quantity",
+					"INSUFFICIENT_QUANTITY");
+		}
+
+		product.setQuantity(product.getQuantity() - quantity);
+		productRepository.save(product);
+		log.info("Product Quantity updated Successfully");
+	}
 
 	/*
 	 * @Override public List<Product> getAllProducts() { // TODO Auto-generated
@@ -104,43 +104,39 @@ private ProductResponse mapToDtoResponse(Product product) {
 	 */
 	@Override
 	public Product updateProduct(long productId, Product product) {
-		Product existingProduct = productRepository.findById(productId).orElseThrow(() -> new ProductServiceCustomException(
-                "Product with given Id not found",
-                "PRODUCT_NOT_FOUND"
-        ));
+		Product existingProduct = productRepository.findById(productId).orElseThrow(
+				() -> new ProductServiceCustomException("Product with given Id not found", "PRODUCT_NOT_FOUND"));
 		existingProduct.setPrice(product.getPrice());
 		existingProduct.setProductName(product.getProductName());
 		existingProduct.setQuantity(product.getQuantity());
 		productRepository.save(existingProduct);
-		
+
 		return existingProduct;
 	}
 
 	@Override
 	public Product deleteproduct(long productId) {
-		Product existingProduct = productRepository.findById(productId).orElseThrow(() -> new ProductServiceCustomException(
-                "Product with given Id not found",
-                "PRODUCT_NOT_FOUND"
-        ));
-		 productRepository.deleteById(productId);
-	       return existingProduct;
+		Product existingProduct = productRepository.findById(productId).orElseThrow(
+				() -> new ProductServiceCustomException("Product with given Id not found", "PRODUCT_NOT_FOUND"));
+		productRepository.deleteById(productId);
+		return existingProduct;
 	}
 
 	@Override
-	public Page<Product> getProductsByName(String productName,Pageable pageable) {
-		 return productRepository.findByproductNameContaining(productName,pageable);
+	public Page<Product> getProductsByName(String productName, Pageable pageable) {
+		return productRepository.findByproductNameContaining(productName, pageable);
 	}
 
 	@Override
-	public Page<Product> findByproductId(long productId,Pageable pageable) {
+	public Page<Product> findByproductId(long id, Pageable pageable) {
 		// TODO Auto-generated method stub
-		return productRepository.findByproductId(productId,pageable);
+		return productRepository.findById(id, pageable);
 	}
 
 	@Override
-	public Page<Product> findByPriceRange(long minimumPrice, long maximumPrice,Pageable pageable) {
+	public Page<Product> findByPriceRange(long minimumPrice, long maximumPrice, Pageable pageable) {
 		// TODO Auto-generated method stub
-		return productRepository.findByPriceBetween(minimumPrice, maximumPrice,pageable);
+		return productRepository.findByPriceBetween(minimumPrice, maximumPrice, pageable);
 	}
 
 	@Override
@@ -149,9 +145,4 @@ private ProductResponse mapToDtoResponse(Product product) {
 		return productRepository.findAll(pageable);
 	}
 
-	/*
-	 * @Override public List<Product> getProductsByName(String productName) { //
-	 * TODO Auto-generated method stub return null; }
-	 */             
-                
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,11 +34,10 @@ public class ProductController {
 	 @Autowired
 	    private ProductService productService;
 	 
-	 @ManagedOperation(description = "Creates new product")
+	
 	 @PostMapping("/save")
-	 public ResponseEntity<Long> addProduct(@RequestBody ProductRequest productRequest) {
-	        long productId = productService.addProduct(productRequest);
-	        return new ResponseEntity<>(productId, HttpStatus.CREATED);
+	    public ResponseEntity<Product> addProduct(@Validated @RequestBody Product product) {
+	        return ResponseEntity.ok(productService.addProduct(product));
 	    }
 	
 	 @GetMapping("/{id}")

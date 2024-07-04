@@ -12,7 +12,7 @@ import com.prunny.response.ProductResponse;
 
 public interface ProductService {
 
-	  long addProduct(ProductRequest productRequest);
+	    Product addProduct(Product product);
 
 	    ProductResponse getProductById(long productId);
 
@@ -33,6 +33,9 @@ public interface ProductService {
 		Page<Product> getProductsByName(String productName, Pageable pageable);
 
 		Page<Product> findByPriceRange(long minimumPrice, long maximumPrice, Pageable pageable);
+
+		
+		
 
 		
 
